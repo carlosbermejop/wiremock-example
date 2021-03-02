@@ -1,0 +1,15 @@
+{
+  "name": "wiremock-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "npx wiremock --root-dir ./mock --port 8081"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "wiremock": "^2.27.2"
+  }
+}

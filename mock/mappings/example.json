@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "GET",
-        "url": "/api/example"
+        "url": "/2/query/?format=xml&hr=true&platform=windows,mac_os&query=(select%20(%23%22score%3ASelf%20Service%20Score%2FSelf%20Service%22%20%23%22score%3ASelf%20Service%20Score%2FSystem%20free%20space%22%20%23%22score%3ASelf%20Service%20Score%2FSystem%20free%20space%2Fpayload%22%20%23%22score%3ASelf%20Service%20Score%2FDays%20since%20restart%22%20%23%22score%3ASelf%20Service%20Score%2FDays%20since%20restart%2Fpayload%22%20%23%22score%3ASelf%20Service%20Score%2FCrashes%22%20%23%22score%3ASelf%20Service%20Score%2FCrashes%2Fpayload%22%20%23%22score%3ASelf%20Service%20Score%2FFreezes%22%20%23%22score%3ASelf%20Service%20Score%2FFreezes%2Fpayload%22%20%23%22score%3ASelf%20Service%20Score%2FDays%20until%20password%20expires%22%20%23%22score%3ASelf%20Service%20Score%2FDays%20until%20password%20expires%2Fpayload%22%20%23%22score%3ASelf%20Service%20Score%2FOneDrive%20network%20traffic%22%20%23%22score%3ASelf%20Service%20Score%2FOneDrive%20network%20traffic%2Fpayload%22%20device_model%20entity%20group_name%20last_ip_address%20name%20number_of_days_since_last_boot%20os_version_and_architecture%20system_drive_free_space)%20(from%20device%20(where%20device%20(eq%20name%20(pattern%20%22NXT-C-NEFELE%22)))))"
     },
     "response": {
         "status": 200,

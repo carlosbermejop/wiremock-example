@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "npx wiremock --root-dir ./mock --port 8081"
+    "serve": "npx wiremock --root-dir ./mock"
   },
   "keywords": [],
   "author": "",

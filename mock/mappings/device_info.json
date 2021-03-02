@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/2/query/?format=xml&hr=true&platform=windows&query=(select%20(average_boot_duration%20average_logon_duration%20last_logged_on_user)%20(from%20device%20(where%20device%20(eq%20name%20(pattern%20%22NXT-C-NEFELE%22)))))"
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "device_info.xml",
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}

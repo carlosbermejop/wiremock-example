@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScoreDef Object="device" InObjectView="true" Name="Self Service Score" UID="e54365e2-6104-f9c8-a171-004c6af2bfba" SyntaxVersion="1" DataModelVersion="12" UsageType="user" Status="enabled">
+    <Platforms>
+        <Platform>windows</Platform>
+    </Platforms>
+    <ScopeQuery>
+        <Filtering>(where device(ne device_type (enum server))(lt number_of_days_since_last_seen (integer 90)))</Filtering>
+    </ScopeQuery>
+    <ComputationSchedule>
+        <At>0</At>
+    </ComputationSchedule>
+    <Thresholds>
+        <Threshold Color="red">
+            <Keyword From="0" Label="critical"/>
+        </Threshold>
+        <Threshold Color="yellow">
+            <Keyword From="3" Label="bad"/>
+        </Threshold>
+        <Threshold Color="green">
+            <Keyword From="7" Label="good"/>
+        </Threshold>
+    </Thresholds>
+    <CompositeScore Name="Self Service" Description="" UID="93587f00-1a98-102b-a37a-7b0010a7836d" Visibility="visible" Weight="1" DisplayName="Self Service" IsFixable="false">
+        <Operation>
+            <Average/>
+        </Operation>
+        <LeafScore Name="System free space" Description="Free space on the system drive" UID="419a5276-d600-8a23-8775-8bbb2604a38d" Visibility="visible" Weight="1" DisplayName="Device — System free space">
+            <Input>
+                <Field Name="system_drive_free_space"/>
+            </Input>
+            <Normalization>
+                <Ranges>
+                    <Range Label="Red">
+                        <From Value="0" Score="0"/>
+                        <To Value="23000000000" Score="3"/>
+                    </Range>
+                    <Range Label="Yellow">
+                        <From Value="23000000000" Score="3"/>
+                        <To Value="30000000000" Score="7"/>
+                    </Range>
+                    <Range Label="Green">
+                        <From Value="30000000000" Score="7"/>
+                        <To Value="80000000000" Score="10"/>
+                    </Range>
+                </Ranges>
+            </Normalization>
+            <Document>
+                <Header>Monitor the amount of free space used on the drive</Header>
+                <Sections>
+                    <Section>
+                        <Title>Available Remote Actions</Title>
+                        <RemoteAction UID="a190ad5b-2921-3a0d-5dc4-bfa408b4feda" Name="Disk Cleanup"/>
+                    </Section>
+                    <Section>
+                        <Title>If Score is:</Title>
+                        <Description>➔ 0 to 3: escalate to L2 hardware team.</Description>
+                        <Description>➔ 3 to 7: schedule for disk replacement.</Description>
+                        <Description>➔ 7 to 10: No action required.</Description>
+                    </Section>
+                </Sections>
+            </Document>
+        </LeafScore>
+        <CompositeScore Name="Last Restart" Description="" UID="5ea16997-849d-3cba-a888-9a137634b5a2" Visibility="visible" Weight="1" DisplayName="Last Restart" IsFixable="false">
+            <Operation>
+                <Average/>
+            </Operation>
+            <LeafScore Name="Days since restart" Description="A score indicating the last time a device was booted." UID="1587c73d-5c37-a83d-a274-933d09677cb7" Visibility="visible" Weight="1" DisplayName="Device - Last Restart">
+                <Input>
+                    <Computation Name="Days since restart" Description="Returns a list of the number of days since the last restart of devices last seen at least more that 1 day ago." UID="1557c788-4762-0964-ffce-35bc0aa719a4">
+                        <Query Output="number_of_days_since_last_boot" DefaultOutputValue="0">(select (number_of_days_since_last_boot)
+    (from device
+        (where device
+            (ge number_of_days_since_last_seen (integer 0))</Query>
+                    </Computation>
+                </Input>
+                <Normalization>
+                    <Ranges>
+                        <Range Label="Red">
+                            <From Value="10" Score="0"/>
+                            <To Value="20" Score="3"/>
+                        </Range>
+                        <Range Label="Yellow">
+                            <From Value="7" Score="3"/>
+                            <To Value="10" Score="7"/>
+                        </Range>
+                        <Range Label="Green">
+                            <From Value="0" Score="7"/>
+                            <To Value="7" Score="10"/>
+                        </Range>
+                    </Ranges>
+                </Normalization>
+                <Document>
+                    <Header>Monitor the number of days since the last reboot</Header>
+                    <Sections>
+                        <Section>
+                            <Title>Available remote actions</Title>
+                            <RemoteAction UID="4fc67441-e4e3-4905-b533-620eb4083c2b" Name="Restart Device"/>
+                        </Section>
+                        <Section>
+                            <Title>If Score is:</Title>
+                            <Description>➔ 0 to 3: schedule reboot of device.</Description>
+                            <Description>➔ 3 to 7: schedule reboot of device.</Description>
+                            <Description>➔ 7 to 10: No action required.</Description>
+                        </Section>
+                    </Sections>
+                </Document>
+            </LeafScore>
+            <Document/>
+        </CompositeScore>
+        <CompositeScore Name="Microsoft Teams Stability" Description="" UID="9744b2c9-bde3-d7b4-b0cf-50fc22b0e2b7" Visibility="visible" Weight="1" DisplayName="Teams Stability" IsFixable="false">
+            <Operation>
+                <Average/>
+            </Operation>
+            <LeafScore Name="Crashes" Description="Number of browser crashes during the last 7 days" UID="d87bdde8-c99b-1c15-6b9c-14af30589ed4" Visibility="visible" Weight="1" DisplayName="Application — Crashes">
+                <Input>
+                    <Computation Name="Teams Crashes" Description="" UID="7f8ed7cc-e992-e010-f95a-93b1755a2bb2">
+                        <Query Output="number_of_application_crashes" DefaultOutputValue="NULL">(select (id)(from device(with execution_error(where executable (eq name (string "teams.exe")))(compute number_of_application_crashes)(between now-7d now))))</Query>
+                    </Computation>
+                </Input>
+                <Normalization>
+                    <Ranges>
+                        <Range Label="Red">
+                            <From Value="2" Score="0"/>
+                            <To Value="50" Score="3"/>
+                        </Range>
+                        <Range Label="Yellow">
+                            <From Value="1" Score="3"/>
+                            <To Value="2" Score="7"/>
+                        </Range>
+                        <Range Label="Green">
+                            <From Value="0" Score="7"/>
+                            <To Value="1" Score="10"/>
+                        </Range>
+                    </Ranges>
+                </Normalization>
+                <Document>
+                    <Header>Monitor the number of times Microsoft Teams has crashed within the last 7 days.</Header>
+                    <Sections>
+                        <Section>
+                            <Title>If Score is:</Title>
+                            <Description>➔ 0 to 3: escalate to L2 software team.</Description>
+                            <Description>➔ 3 to 7: escalate to L2 software team.</Description>
+                            <Description>➔ 7 to 10: No action required.</Description>
+                        </Section>
+                    </Sections>
+                </Document>
+            </LeafScore>
+            <LeafScore Name="Freezes" Description="Number of browser freezes (not responding events) during the last 7 days" UID="2a4efb7c-a2d6-dc9a-c4f9-eafdfde0f5a9" Visibility="visible" Weight="1" DisplayName="Application — Freezes">
+                <Input>
+                    <Computation Name="Teams Freezes" Description="" UID="d8cdb4ce-563a-4592-ea06-839637ed364e">
+                        <Query Output="number_of_application_not_responding_events" DefaultOutputValue="NULL">(select (id)(from device(with execution_error(where executable (eq name (string "teams.exe")))(compute number_of_application_not_responding_events)(between now-7d now))))</Query>
+                    </Computation>
+                </Input>
+                <Normalization>
+                    <Ranges>
+                        <Range Label="Red">
+                            <From Value="4" Score="0"/>
+                            <To Value="100" Score="3"/>
+                        </Range>
+                        <Range Label="Yellow">
+                            <From Value="2" Score="3"/>
+                            <To Value="4" Score="7"/>
+                        </Range>
+                        <Range Label="Green">
+                            <From Value="0" Score="7"/>
+                            <To Value="2" Score="10"/>
+                        </Range>
+                    </Ranges>
+                </Normalization>
+                <Document>
+                    <Header>Monitor the number of times that Microsoft Teams has frozen within the last 7 days.</Header>
+                    <Sections>
+                        <Section>
+                            <Title>If Score is:</Title>
+                            <Description>➔ 0 to 3: escalate to L2 software team.</Description>
+                            <Description>➔ 3 to 7: escalate to L2 software team.</Description>
+                            <Description>➔ 7 to 10: No action required.</Description>
+                        </Section>
+                    </Sections>
+                </Document>
+            </LeafScore>
+            <Document/>
+        </CompositeScore>
+        <CompositeScore Name="Password to Change" Description="" UID="13f67a56-159a-3bec-d181-5f1640656590" Visibility="visible" Weight="1" DisplayName="Password to Change" IsFixable="false">
+            <Operation>
+                <Average/>
+            </Operation>
+            <LeafScore Name="Days until password expires" Description="Indicates the period in time (in days) during which the password can be used before the system requires the user to change it" UID="820f0f65-7fb8-292d-9a1c-4c439ed5e6c1" Visibility="visible" Weight="1" DisplayName="Device - Days until password expiration">
+                <Input>
+                    <Computation Name="Days until password expiration" Description="" UID="ff0a9db0-b31d-e31d-3e7f-8b3ee9d0f099">
+                        <Query Output="action:Invoke Proactive Password Reset/DaysUntilExpiration" DefaultOutputValue="NULL">(select (#"action:Invoke Proactive Password Reset/DaysUntilExpiration") 
+    (from device
+        (where device 
+            (ge #"action:Invoke Proactive Password Reset/DaysUntilExpiration" (integer 0)))))</Query>
+                    </Computation>
+                </Input>
+                <Normalization>
+                    <Ranges>
+                        <Range Label="Red">
+                            <From Value="0" Score="0"/>
+                            <To Value="3" Score="3"/>
+                        </Range>
+                        <Range Label="Yellow">
+                            <From Value="3" Score="3"/>
+                            <To Value="14" Score="7"/>
+                        </Range>
+                        <Range Label="Green">
+                            <From Value="14" Score="7"/>
+                        </Range>
+                    </Ranges>
+                </Normalization>
+                <Document>
+                    <Header>Monitor the number of days remaining until password expiration.</Header>
+                    <Sections>
+                        <Section>
+                            <Title>Available remote actions</Title>
+                            <RemoteAction UID="00e485db-db43-f503-0cc9-210e84a60db8" Name="Password Reset"/>
+                        </Section>
+                        <Section>
+                            <Title>If Score is:</Title>
+                            <Description>➔ 0 to 3: escalate to L2 with high priority</Description>
+                            <Description>➔ 3 to 7: escalate to L2</Description>
+                            <Description>➔ 7: No Action</Description>
+                        </Section>
+                    </Sections>
+                </Document>
+            </LeafScore>
+            <Document/>
+        </CompositeScore>
+        <CompositeScore Name="OneDrive" Description="" UID="84dd65f3-93dc-2452-b458-08d408ed3314" Visibility="visible" Weight="1" DisplayName="OneDrive" IsFixable="false">
+            <Operation>
+                <Average/>
+            </Operation>
+            <LeafScore Name="OneDrive network traffic" Description="indicates the total network traffic generated by OneDrive executables" UID="4b43bfff-add5-6e63-d11c-18ddb628f9a2" Visibility="visible" Weight="1" DisplayName="Device - total network traffic">
+                <Input>
+                    <Computation Name="total network traffic" Description="" UID="5b924896-9f46-9631-7ff7-1785cbc7215e">
+                        <Query Output="total_network_traffic" DefaultOutputValue="NULL">(select (id name)
+   (from device
+       (with connection
+       (where executable
+           (eq name (string onedrive.exe)))
+       (compute total_network_traffic)
+       (between midnight-7d midnight))))</Query>
+                    </Computation>
+                </Input>
+                <Normalization>
+                    <Ranges>
+                        <Range Label="Red">
+                            <From Value="0" Score="0"/>
+                            <To Value="1" Score="3"/>
+                        </Range>
+                        <Range Label="Yellow">
+                            <From Value="1" Score="3"/>
+                            <To Value="3" Score="7"/>
+                        </Range>
+                        <Range Label="Green">
+                            <From Value="3" Score="7"/>
+                        </Range>
+                    </Ranges>
+                </Normalization>
+                <Document>
+                    <Header>Monitor total network traffic generated associated with OneDrive clients.</Header>
+                    <Sections>
+                        <Section>
+                            <Title>If Score is:</Title>
+                            <Description>➔ 0 to 3: OneDrive present, but no traffic</Description>
+                            <Description>➔ 3 to 7: OneDrive present, but low traffic</Description>
+                            <Description>➔ 7 : OneDrive present with normal traffic</Description>
+                        </Section>
+                    </Sections>
+                </Document>
+            </LeafScore>
+            <Document/>
+        </CompositeScore>
+        <Document/>
+    </CompositeScore>
+</ScoreDef>

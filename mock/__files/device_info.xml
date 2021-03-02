@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><table><header><c0 type="millisecond">average_boot_duration</c0><c1 type="millisecond">average_logon_duration</c1><c2 type="string">last_logged_on_user</c2></header><body><r><c0>36s</c0><c1>12s</c1><c2>Administrator@NXT-C-NEFELE</c2></r></body></table>
